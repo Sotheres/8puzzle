@@ -61,7 +61,7 @@ public class Board {
                 if (board[i][j] != i * bSize + j + 1 && board[i][j] != 0) {
                     if (board[i][j] % bSize != 0) {
                         count += Math.abs(i - board[i][j]/bSize)
-                                + Math.abs(j - ((board[i][j]/bSize)*bSize - 1));
+                                + Math.abs(j - (board[i][j] - (board[i][j]/bSize)*bSize - 1));
                     } else {
                         count += Math.abs(i - (board[i][j]/bSize - 1))
                                 + Math.abs(j - (bSize - 1));
@@ -189,11 +189,12 @@ public class Board {
     public static void main(String[] args) {
         int[][] arr = new int[3][3];
         int[] num = {8, 1, 3, 4, 0, 2, 7, 6, 5};
+        int[] num2 = {1, 2, 3, 4, 5, 6, 7, 8, 0};
         int k = 0;
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                arr[i][j] = num[k++];
+                arr[i][j] = num2[k++];
             }
         }
 
@@ -202,5 +203,18 @@ public class Board {
         System.out.println("Manh: " + b.manhattan());
         System.out.println("Hamm: " + b.hamming());
 
+        Iterable<Board> list = b.neighbors();
+//        for (Board neigh : list) {
+//            System.out.println(neigh);
+//        }
+
+        System.out.println("\nTwin: ");
+        Board twin = b.twin();
+
+        System.out.println(twin);
+        System.out.println(twin.dimension());
+        System.out.println(twin.isGoal());
+
+        System.out.println(b.isGoal());
     }
 }
