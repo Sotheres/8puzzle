@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 public class Solver {
 
-    private final Board initBoard;
+    private boolean solvable;
     private final LinkedList<Board> solution;
     private int numOfMoves;
 
@@ -69,47 +69,14 @@ public class Solver {
             throw new IllegalArgumentException("Board is null.");
         }
 
-        initBoard = initial;
-        MinPQ<SearchNode> pq = new MinPQ<>();
-        solution = new LinkedList<>();
-
-        if (!isSolvable()) {
-            return;
-        }
-
-        SearchNode initNode = new SearchNode(initial, 0, null);
-        pq.insert(initNode);
-        SearchNode deleted;
-
-        while (!pq.isEmpty()) {
-            deleted = pq.delMin();
-
-            if (deleted.board.isGoal()) {
-                numOfMoves = deleted.moves;
-                while (deleted.prev != null) {
-                    solution.addFirst(deleted.board);
-                    deleted = deleted.prev;
-                }
-                solution.addFirst(deleted.board);
-                break;
-            }
-
-            for (SearchNode sn : deleted.neighbors()) {
-                if (!sn.equals(deleted.prev)) {
-                    pq.insert(sn);
-                }
-            }
-        }
-
-    }
-
-    public boolean isSolvable() {
-        SearchNode twin = new SearchNode(initBoard.twin(), 0, null);
-
         MinPQ<SearchNode> pq = new MinPQ<>();
         MinPQ<SearchNode> pqTw = new MinPQ<>();
+        solution = new LinkedList<>();
 
-        pq.insert(new SearchNode(initBoard, 0, null));
+        SearchNode initNode = new SearchNode(initial, 0, null);
+        SearchNode twin = new SearchNode(initial.twin(), 0, null);
+
+        pq.insert(initNode);
         pqTw.insert(twin);
         SearchNode deleted;
         SearchNode deletedTw;
@@ -119,10 +86,18 @@ public class Solver {
             deletedTw = pqTw.delMin();
 
             if (deleted.board.isGoal()) {
-                return true;
+                solvable = true;
+                numOfMoves = deleted.moves;
+
+                while (deleted.prev != null) {
+                    solution.addFirst(deleted.board);
+                    deleted = deleted.prev;
+                }
+                solution.addFirst(deleted.board);
+                break;
             }
             if (deletedTw.board.isGoal()) {
-                return false;
+                break;
             }
 
             for (SearchNode sn : deleted.neighbors()) {
@@ -137,7 +112,10 @@ public class Solver {
             }
         }
 
-        return pqTw.isEmpty();
+    }
+
+    public boolean isSolvable() {
+        return solvable;
     }
 
     public int moves() {
