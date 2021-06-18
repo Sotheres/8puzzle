@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 public class Solver {
 
-    private Board initBoard;
+    private final Board initBoard;
     private final LinkedList<Board> solution;
     private int numOfMoves;
 
@@ -22,7 +22,6 @@ public class Solver {
             priority = board.manhattan() + moves;
         }
 
-        @Override
         public int compareTo(SearchNode that) {
             if (this.priority < that.priority) {
                 return -1;
@@ -74,6 +73,10 @@ public class Solver {
         MinPQ<SearchNode> pq = new MinPQ<>();
         solution = new LinkedList<>();
 
+        if (!isSolvable()) {
+            return;
+        }
+
         SearchNode initNode = new SearchNode(initial, numOfMoves, null);
         pq.insert(initNode);
         SearchNode deleted;
@@ -96,7 +99,7 @@ public class Solver {
     }
 
     public boolean isSolvable() {
-        int numOfMoves = 0;
+        numOfMoves = 0;
         SearchNode twin = new SearchNode(initBoard.twin(), numOfMoves, null);
 
         MinPQ<SearchNode> pq = new MinPQ<>();
