@@ -1,5 +1,4 @@
 import edu.princeton.cs.algs4.StdRandom;
-
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -7,7 +6,6 @@ public class Board {
 
     private final int[][] board;
     private final int bSize;
-    private final int priority;
 
     public Board(int[][] tiles) {
         bSize = tiles.length;
@@ -16,8 +14,6 @@ public class Board {
         for (int i = 0; i < bSize; i++) {
             System.arraycopy(tiles[i], 0, board[i], 0, bSize);
         }
-
-        priority = manhattan();
     }
 
     @Override
@@ -74,7 +70,7 @@ public class Board {
     }
 
     public boolean isGoal() {
-        return priority == 0;
+        return manhattan() == 0;
     }
 
     @Override
@@ -93,6 +89,7 @@ public class Board {
     }
 
     public Iterable<Board> neighbors() {
+
         int[][] temp = new int[bSize][bSize];
         for (int i = 0; i < bSize; i++) {
             System.arraycopy(board[i], 0, temp[i], 0, bSize);
@@ -108,6 +105,7 @@ public class Board {
                         swap(temp, i + 1, j, i, j);
                         swap(temp, i, j, i, j + 1);
                         neighbors.add(new Board(temp));
+                        break;
                     } else if (j > 0 && j < bSize - 1 && i == 0) {
                         swap(temp, i, j, i, j - 1);
                         neighbors.add(new Board(temp));
@@ -117,6 +115,24 @@ public class Board {
                         swap(temp, i + 1, j, i, j);
                         swap(temp, i, j, i, j + 1);
                         neighbors.add(new Board(temp));
+                        break;
+                    } else if (j == bSize - 1 && i == 0) {
+                        swap(temp, i, j, i + 1, j);
+                        neighbors.add(new Board(temp));
+                        swap(temp, i + 1, j, i, j);
+                        swap(temp, i, j, i, j - 1);
+                        neighbors.add(new Board(temp));
+                        break;
+                    } else if (j == 0 && i < bSize - 1) {
+                        swap(temp, i, j, i, j + 1);
+                        neighbors.add(new Board(temp));
+                        swap(temp, i, j + 1, i, j);
+                        swap(temp, i, j, i + 1, j);
+                        neighbors.add(new Board(temp));
+                        swap(temp, i + 1, j, i, j);
+                        swap(temp, i, j, i - 1, j);
+                        neighbors.add(new Board(temp));
+                        break;
                     } else if (j > 0 && j < bSize - 1 && i > 0 && i < bSize - 1) {
                         swap(temp, i, j, i, j - 1);
                         neighbors.add(new Board(temp));
@@ -129,12 +145,24 @@ public class Board {
                         swap(temp, i + 1, j, i, j);
                         swap(temp, i, j, i, j + 1);
                         neighbors.add(new Board(temp));
+                        break;
+                    } else if (j == bSize - 1 && i < bSize - 1) {
+                        swap(temp, i, j, i, j - 1);
+                        neighbors.add(new Board(temp));
+                        swap(temp, i, j - 1, i, j);
+                        swap(temp, i, j, i + 1, j);
+                        neighbors.add(new Board(temp));
+                        swap(temp, i + 1, j, i, j);
+                        swap(temp, i, j, i - 1, j);
+                        neighbors.add(new Board(temp));
+                        break;
                     } else if (i == bSize - 1 && j == 0) {
                         swap(temp, i, j, i - 1, j);
                         neighbors.add(new Board(temp));
                         swap(temp, i - 1, j, i, j);
                         swap(temp, i, j, i, j + 1);
                         neighbors.add(new Board(temp));
+                        break;
                     } else if (j > 0 && j < bSize - 1 && i == bSize - 1) {
                         swap(temp, i, j, i, j - 1);
                         neighbors.add(new Board(temp));
@@ -144,12 +172,14 @@ public class Board {
                         swap(temp, i - 1, j, i, j);
                         swap(temp, i, j, i, j + 1);
                         neighbors.add(new Board(temp));
+                        break;
                     } else if (i == bSize - 1 && j == bSize - 1) {
                         swap(temp, i, j, i - 1, j);
                         neighbors.add(new Board(temp));
                         swap(temp, i - 1, j, i, j);
                         swap(temp, i, j, i, j - 1);
                         neighbors.add(new Board(temp));
+                        break;
                     }
                 }
             }
@@ -188,7 +218,6 @@ public class Board {
 
     public static void main(String[] args) {
         int[][] arr = new int[3][3];
-        int[] num = {8, 1, 3, 4, 0, 2, 7, 6, 5};
         int[] num2 = {1, 2, 3, 4, 5, 6, 7, 8, 0};
         int k = 0;
 
@@ -202,19 +231,24 @@ public class Board {
         System.out.println(b);
         System.out.println("Manh: " + b.manhattan());
         System.out.println("Hamm: " + b.hamming());
+        System.out.println("Solved: " + b.isGoal());
+
+        System.out.println("\nNeighbors: ");
 
         Iterable<Board> list = b.neighbors();
-//        for (Board neigh : list) {
-//            System.out.println(neigh);
-//        }
+        for (Board neigh : list) {
+            System.out.println(neigh);
+        }
 
-        System.out.println("\nTwin: ");
+        System.out.println("Twin: ");
         Board twin = b.twin();
 
         System.out.println(twin);
-        System.out.println(twin.dimension());
-        System.out.println(twin.isGoal());
+        System.out.println("Manh: " + twin.manhattan());
+        System.out.println("Hamm: " + twin.hamming());
+        System.out.println("Twin dimension: " + twin.dimension());
+        System.out.println("Solved: " + twin.isGoal());
 
-        System.out.println(b.isGoal());
+        System.out.println("Equals: " + b.equals(twin));
     }
 }
