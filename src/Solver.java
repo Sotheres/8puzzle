@@ -42,7 +42,7 @@ public class Solver {
             LinkedList<SearchNode> list = new LinkedList<>();
 
             for (Board b : board.neighbors()) {
-                list.add(new SearchNode(b, numOfMoves, this));
+                list.add(new SearchNode(b, this.moves + 1, this));
             }
 
             return list;
@@ -77,35 +77,39 @@ public class Solver {
             return;
         }
 
-        SearchNode initNode = new SearchNode(initial, numOfMoves, null);
+        SearchNode initNode = new SearchNode(initial, 0, null);
         pq.insert(initNode);
         SearchNode deleted;
 
         while (!pq.isEmpty()) {
             deleted = pq.delMin();
-            solution.add(deleted.board);
 
             if (deleted.board.isGoal()) {
+                numOfMoves = deleted.moves;
+                while (deleted.prev != null) {
+                    solution.addFirst(deleted.board);
+                    deleted = deleted.prev;
+                }
+                solution.addFirst(deleted.board);
                 break;
             }
 
-            numOfMoves++;
             for (SearchNode sn : deleted.neighbors()) {
                 if (!sn.equals(deleted.prev)) {
                     pq.insert(sn);
                 }
             }
         }
+
     }
 
     public boolean isSolvable() {
-        numOfMoves = 0;
-        SearchNode twin = new SearchNode(initBoard.twin(), numOfMoves, null);
+        SearchNode twin = new SearchNode(initBoard.twin(), 0, null);
 
         MinPQ<SearchNode> pq = new MinPQ<>();
         MinPQ<SearchNode> pqTw = new MinPQ<>();
 
-        pq.insert(new SearchNode(initBoard, numOfMoves, null));
+        pq.insert(new SearchNode(initBoard, 0, null));
         pqTw.insert(twin);
         SearchNode deleted;
         SearchNode deletedTw;
@@ -121,7 +125,6 @@ public class Solver {
                 return false;
             }
 
-            numOfMoves++;
             for (SearchNode sn : deleted.neighbors()) {
                 if (!sn.equals(deleted.prev)) {
                     pq.insert(sn);

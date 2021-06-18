@@ -1,4 +1,3 @@
-import edu.princeton.cs.algs4.StdRandom;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -20,14 +19,12 @@ public class Board {
     public String toString() {
         StringBuilder s = new StringBuilder();
         s.append(bSize).append("\n");
-
         for (int i = 0; i < bSize; i++) {
             for (int j = 0; j < bSize; j++) {
-                s.append(" ").append(board[i][j]).append("\t");
+                s.append(String.format("%2d ", board[i][j]));
             }
             s.append("\n");
         }
-
         return s.toString();
     }
 
@@ -194,9 +191,11 @@ public class Board {
             System.arraycopy(board[i], 0, temp[i], 0, bSize);
         }
 
-        int q = StdRandom.uniform(bSize - 1);
-        int r = StdRandom.uniform(bSize);
-        swap(temp, q, r, q + 1, r);
+        if (temp[0][0] != 0 && temp[0][1] != 0) {
+            swap(temp, 0, 0, 0, 1);
+        } else {
+            swap(temp, 1, 0, 1, 1);
+        }
 
         return new Board(temp);
     }
@@ -229,26 +228,5 @@ public class Board {
 
         Board b = new Board(arr);
         System.out.println(b);
-        System.out.println("Manh: " + b.manhattan());
-        System.out.println("Hamm: " + b.hamming());
-        System.out.println("Solved: " + b.isGoal());
-
-        System.out.println("\nNeighbors: ");
-
-        Iterable<Board> list = b.neighbors();
-        for (Board neigh : list) {
-            System.out.println(neigh);
-        }
-
-        System.out.println("Twin: ");
-        Board twin = b.twin();
-
-        System.out.println(twin);
-        System.out.println("Manh: " + twin.manhattan());
-        System.out.println("Hamm: " + twin.hamming());
-        System.out.println("Twin dimension: " + twin.dimension());
-        System.out.println("Solved: " + twin.isGoal());
-
-        System.out.println("Equals: " + b.equals(twin));
     }
 }
